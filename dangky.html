@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auth - Bài thuốc dân gian</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 340px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .login-btn { background: #4caf50; color: white; }
+    .register-btn { background: #2196f3; color: white; }
+
+    button:hover { opacity: 0.9; }
+
+    .msg {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Hệ thống</h2>
+
+  <input type="text" id="username" placeholder="Tên đăng nhập">
+  <input type="password" id="password" placeholder="Mật khẩu">
+
+  <button class="login-btn" onclick="login()">Đăng nhập</button>
+  <button class="register-btn" onclick="register()">Đăng ký</button>
+
+  <div id="msg" class="msg"></div>
+</div>
+
+<script>
+  // lấy user list từ localStorage
+  function getUsers() {
+    return JSON.parse(localStorage.getItem("users") || "[]");
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem("users", JSON.stringify(users));
+  }
+
+  function register() {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
+    const msg = document.getElementById("msg");
+
+    if (!u || !p) {
+      msg.className = "msg error";
+      msg.innerText = "Vui lòng nhập đủ thông tin!";
+      return;
+    }
+
+    let users = getUsers();
+
+    // kiểm tra trùng user
+    if (users.find(user => user.username === u)) {
+      msg.className = "msg error";
+      msg.innerText = "Tên đăng nhập đã tồn tại!";
+      return;
+    }
+
+    users.push({ username: u, password: p });
+    saveUsers(users);
+
+    msg.className = "msg success";
+    msg.innerText = "Đăng ký thành công!";
+  }
+
+  function login() {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
+    const msg = document.getElementById("msg");
+
+    let users = getUsers();
+
+    const found = users.find(user => user.username === u && user.password === p);
+
+    if (found) {
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("currentUser", u);
+
+      msg.className = "msg success";
+      msg.innerText = "Đăng nhập thành công...";
+
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 800);
+
+    } else {
+      msg.className = "msg error";
+      msg.innerText = "Sai tài khoản hoặc mật khẩu!";
+    }
+  }
+
+  // auto redirect nếu đã login
+  window.onload = function () {
+    if (localStorage.getItem("loggedIn") === "true") {
+      window.location.href = "index.html";
+    }
+  }
+</script>
+
+</body>
+</html>
