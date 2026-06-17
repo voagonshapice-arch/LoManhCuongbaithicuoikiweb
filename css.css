@@ -94,7 +94,6 @@ main{
 }
 .bigcard:hover{
     transform: translateY(-10px);
-    background: rgba(0,0,0,0.5);
 }
 
 .card{
